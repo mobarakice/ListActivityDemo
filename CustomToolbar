@@ -1,0 +1,30 @@
+# Toolbar style customaization
+
+<style name="CustomToolbarTheme" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#ffF000</item>
+    </style>
+
+    <style name="CustomToolbarPopupTheme" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:textColorPrimary">#ff0</item>
+        <item name="android:textColorSecondary">#ffffff</item>
+        <item name="android:background">#ffffff</item>
+    </style>
+
+# Toolbar xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimary"
+    app:popupTheme="@style/CustomToolbarPopupTheme"
+    app:theme="@style/CustomToolbarTheme">
+
+</android.support.v7.widget.Toolbar>
+
+##someLink
+http://www.viralandroid.com/2016/03/how-to-add-spinner-dropdown-list-to-android-actionbar-toolbar.html
+http://stackoverflow.com/questions/26510930/android-lollipop-add-popup-menu-from-title-in-toolbar
+http://stackoverflow.com/questions/35168866/how-to-add-spinner-to-toolbar-subtitle
