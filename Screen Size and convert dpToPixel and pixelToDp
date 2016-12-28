@@ -43,14 +43,9 @@ public class Util {
      * @param context
      * @return
      */
-    public static float screenSize(Context context) {
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = windowManager.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-        return ((float) (height * width));
+    public static int screenSize(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return displayMetrics.densityDpi;
     }
 
     /**
