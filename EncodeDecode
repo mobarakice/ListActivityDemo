@@ -1,0 +1,154 @@
+package jp.com.atom.jrfbilling.merchant.common;
+
+
+import android.util.Base64;
+import android.util.Log;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
+/**
+ * Created by Mobarak on 16-Mar-17.
+ */
+
+public class EncodeDecodeUtil {
+
+    /**
+     * SecretKey
+     */
+    private static SecretKeySpec secretKey;
+    private static byte[] key;
+
+    /**
+     * Set encription key
+     *
+     * @param encryptionKey
+     */
+    public static void setKey(String encryptionKey) {
+        MessageDigest sha = null;
+        try {
+            key = encryptionKey.getBytes("UTF-8");
+            sha = MessageDigest.getInstance("SHA-1");
+            key = sha.digest(key);
+            key = Arrays.copyOf(key, 16);
+            secretKey = new SecretKeySpec(key, "AES");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Invock to encrypting string
+     *
+     * @param txt
+     * @param key
+     * @return encrpted text
+     */
+    public static String encrypt(String txt, String key, String ivString) {
+        try {
+//            setKey(key);
+//            byte[] keys = key.getBytes(StandardCharsets.UTF_8);
+//            keys = Arrays.copyOf(keys, 16);
+//            SecretKeySpec keySpec = new SecretKeySpec(keys, "AES");
+
+            IvParameterSpec iv = new IvParameterSpec(Arrays.copyOf(ivString.getBytes(StandardCharsets.UTF_8), 16));
+            SecretKeySpec keySpec = setupKey(key);
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+//            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv);
+//            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] bytes = cipher.doFinal(txt.getBytes(StandardCharsets.UTF_8));
+            return Base64.encodeToString(bytes, Base64.NO_WRAP);
+        } catch (Exception e) {
+            Log.e("EncryptionError: ", "" + e.toString());
+        }
+        return null;
+    }
+
+    /**
+     * Invock to decrypting string
+     *
+     * @param encodedString
+     * @param key
+     * @return original text
+     */
+    public static String decrypt(String encodedString, String key, String ivString) {
+        try {
+//            setKey(key);
+//            byte[] keys = key.getBytes(StandardCharsets.UTF_8);
+//            keys = Arrays.copyOf(keys, 16);
+//            SecretKeySpec keySpec = new SecretKeySpec(keys, "AES");
+
+            IvParameterSpec iv = new IvParameterSpec(Arrays.copyOf(ivString.getBytes(StandardCharsets.UTF_8), 16));
+            SecretKeySpec keySpec = setupKey(key);
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7PADDING");
+//            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7PADDING");
+            cipher.init(Cipher.DECRYPT_MODE, keySpec, iv);
+            byte[] bytes = cipher.doFinal(Base64.decode(encodedString, Base64.DEFAULT));
+            return new String(bytes);
+        } catch (Exception e) {
+            Log.e("EncryptionError: ", "" + e.toString());
+        }
+        return null;
+    }
+
+    public static SecretKeySpec setupKey(String encryptionKey) {
+        try {
+            byte[] key = encryptionKey.getBytes("UTF-8");
+            key = Arrays.copyOf(key, 16);
+            SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
+            return secretKey;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Invock to encode string
+     *
+     * @param txt
+     * @return
+     */
+    public static String encodeStringToBase64(String txt) {
+        String encodeString = null;
+        try {
+            byte[] bytes = txt.getBytes(StandardCharsets.UTF_8);
+            encodeString = Base64.encodeToString(bytes, Base64.DEFAULT);
+            Log.d("encodeStringToBase64", "seelog: " + encodeString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return encodeString;
+    }
+
+    /**
+     * Invock to decode string
+     *
+     * @param encodeString
+     * @return
+     */
+    public static String decodeStringToBase64(String encodeString) {
+        String decodeString = null;
+        try {
+            byte[] bytes = Base64.decode(encodeString, Base64.DEFAULT);
+            decodeString = new String(bytes, StandardCharsets.UTF_8);
+            Log.d("decodeStringToBase64", "seelog: " + decodeString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return decodeString;
+    }
+
+
+}
